@@ -1,4 +1,3 @@
-
 import psycopg2
 
 from koneksi import buka_koneksi
@@ -131,8 +130,8 @@ def main():
 
         menu_awal()
 
-    except psycopg2.Error as error:
-        print("Koneksi database gagal:", error)
+    except psycopg2.Error:
+        print("Koneksi database gagal")
 
 
 if __name__ == "__main__":

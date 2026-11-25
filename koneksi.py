@@ -4,9 +4,9 @@ import psycopg2
 def buka_koneksi():
     koneksi = psycopg2.connect(
         host="localhost",
-        database="db_siapuji",
+        database="siapuji 2 sql",
         user="postgres",
-        password="dini19",
+        password="nara789",
         port="5432"
     )
 
