@@ -2,21 +2,21 @@ CREATE TABLE role_pengguna (
 id_role SERIAL PRIMARY KEY,
 nama_role VARCHAR(20)
 );
+
 CREATE TABLE pengguna(
 id_pengguna SERIAL PRIMARY KEY,
 nama_pengguna VARCHAR(100),
-username VARCHAR(50),
+username VARCHAR(50) UNIQUE,
 password_hash VARCHAR(255),
 id_role INTEGER REFERENCES role_pengguna (id_role)
 );
 
-ALTER TABLE pengguna
-ADD CONSTRAINT unique_username UNIQUE (username);
-
 CREATE TABLE materi(
 id_materi SERIAL PRIMARY KEY,
-nama_materi VARCHAR(100)
+nama_materi VARCHAR(100),
+status_aktif BOOLEAN DEFAULT TRUE
 );
+
 CREATE TABLE soal(
 id_soal SERIAL PRIMARY KEY,
 id_materi INTEGER REFERENCES materi(id_materi),
@@ -26,8 +26,10 @@ pilihan_b TEXT,
 pilihan_c TEXT,
 pilihan_d TEXT,
 kunci_jawaban CHAR(1),
-pembahasan TEXT
+pembahasan TEXT,
+status_aktif BOOLEAN DEFAULT TRUE
 );
+
 CREATE TABLE riwayat_latihan(
 id_riwayat SERIAL PRIMARY KEY,
 id_pengguna INTEGER REFERENCES pengguna(id_pengguna),
@@ -38,6 +40,7 @@ jumlah_benar INTEGER,
 jumlah_salah INTEGER,
 nilai NUMERIC(5,2)
 );
+
 CREATE TABLE detail_latihan(
 id_detail SERIAL PRIMARY KEY,
 id_riwayat INTEGER REFERENCES riwayat_latihan(id_riwayat),
@@ -46,13 +49,7 @@ jawaban_pengguna CHAR(1),
 status_jawaban BOOLEAN
 );
 
-ALTER TABLE materi
-ADD COLUMN status_aktif BOOLEAN DEFAULT TRUE;
-
-ALTER TABLE soal
-ADD COLUMN status_aktif BOOLEAN DEFAULT TRUE;
-
-INSERT INTO role_pengguna (nama_role)
+iNSERT INTO role_pengguna (nama_role)
 VALUES
 ('Admin'),
 ('Mahasiswa');
@@ -182,27 +179,3 @@ SELECT * FROM materi;
 SELECT * FROM soal;
 SELECT * FROM riwayat_latihan;
 SELECT * FROM detail_latihan;
-
-SELECT setval(
-    pg_get_serial_sequence('public.pengguna', 'id_pengguna'),
-    COALESCE((SELECT MAX(id_pengguna) FROM public.pengguna), 1),
-    EXISTS(SELECT 1 FROM public.pengguna)
-);
-
-SELECT MAX(id_pengguna) FROM pengguna;
-
-SELECT column_name, column_default
-FROM information_schema.columns
-WHERE table_name = 'pengguna'
-AND column_name = 'id_pengguna';
-
-SELECT setval(
-    pg_get_serial_sequence('public.pengguna', 'id_pengguna'),
-    COALESCE(MAX(id_pengguna), 1),
-    MAX(id_pengguna) IS NOT NULL
-)
-FROM public.pengguna;
-
-TRUNCATE TABLE pengguna RESTART IDENTITY CASCADE;
-TRUNCATE TABLE riwayat_latihan RESTART IDENTITY CASCADE;
-TRUNCATE TABLE detail_latihan RESTART IDENTITY CASCADE;

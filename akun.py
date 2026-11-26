@@ -51,12 +51,12 @@ def registrasi():
             if not nama:
                 print("\nNama tidak boleh kosong.")
                 jeda()
-                continue
+                return
 
             if not all(huruf.isalpha() or huruf == " " for huruf in nama):
                 print("\nNama hanya boleh berisi huruf dan spasi.")
                 jeda()
-                continue
+                return
 
             nama = nama.title()
             break
